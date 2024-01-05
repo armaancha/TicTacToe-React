@@ -33,11 +33,32 @@ export default function Board(props) {
       hasMounted.current = true;
       return;
     }
-    if (!checkWin(cells)) {
-      props.nextPlayer();
+    if (!checkWin(cells) && !checkFull()) {
+      if(props.nextPlayer()) {
+        setTimeout(() => {autoPlay()}, 1000);
+      }
     }
-    checkFull();
   }, [cells]);
+
+  function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+  }
+
+  function autoPlay() {
+    let x = getRandomInt(9);
+    while(cells[x]!="-") {
+      x = getRandomInt(9);
+    }
+    let y = cells.map((item, index) => {
+      if(index===x) {
+        return "O";
+      }
+      return item;
+    })
+    setCells(y);
+
+  }
+  
 
   function checkWin(x) {
     if (
@@ -75,7 +96,9 @@ export default function Board(props) {
   function checkFull() {
     if (cells.indexOf("-") < 0 && props.gameStatus != "Won") {
       props.gameResult("Draw");
+      return true;
     }
+    return false;
   }
 
   function cellClicked(e) {
