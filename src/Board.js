@@ -108,6 +108,9 @@ export default function Board(props) {
     if (cells[parseInt(e.target.id)] != "-") {
       return;
     }
+    if (props.gameMode===1 && props.playerTurn==="O") {
+      return;
+    }
     let x = cells.map((item, index) => {
       if (index === parseInt(e.target.id)) {
         return props.playerTurn;

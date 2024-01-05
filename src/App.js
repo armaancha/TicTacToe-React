@@ -46,6 +46,7 @@ export default function App() {
         nextPlayer={nextPlayer}
         gameResult={gameResult}
         gameStatus={gameStatus}
+        gameMode={gameMode}
       />
       {gameStatus === "Won" || gameStatus === "Draw" || gameStatus==="Initial" ? (
         <div id="playAgain">
