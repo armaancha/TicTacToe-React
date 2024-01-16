@@ -6,16 +6,13 @@ export default function App() {
   const [playerTurn, setPlayerTurn] = useState("X");
   const [gameStatus, setGameStatus] = useState("Initial");
   const [gameMode, setGameMode] = useState(2);
+  const [theme, setTheme] = useState("Light");
 
   nextPlayer = () => {
     if (playerTurn === "X") {
-      setPlayerTurn("O")
-      if (gameMode===1) {
-        return true;
-      }
+      setPlayerTurn("O");
     } else {
       setPlayerTurn("X");
-      return false;
     }
   };
 
@@ -25,21 +22,42 @@ export default function App() {
 
   twoClicked = () => {
     setPlayerTurn("X");
-    setGameStatus("Turn");
+    setGameStatus("Reset");
     setGameMode(2);
   };
 
   oneClicked = () => {
     setPlayerTurn("X");
-    setGameStatus("Turn");
+    setGameStatus("Reset");
     setGameMode(1);
   };
 
+  zeroClicked = () => {
+    setPlayerTurn("X");
+    setGameStatus("Reset");
+    setGameMode(0);
+  };
+
+  themeClicked = () => {
+    if (theme === "Light") {
+      setTheme("Dark");
+      return;
+    }
+    setTheme("Light");
+  };
+
   return (
-    <div className="App">
-      <h1>Tic Tac Toe</h1>
+    <div id={"App" + theme}>
+      <div id={"header" + theme}>
+        <h1>Tic Tac Toe</h1>
+        <label class="switch">
+          <input type="checkbox" onClick={themeClicked} />
+          <span class="slider round" />
+        </label>
+      </div>
       <h2 id="turnHeader">
-        {gameStatus === "Draw" || gameStatus === "Initial" ? null : playerTurn} {gameStatus === "Initial" ? null : gameStatus}
+        {gameStatus === "Draw" || gameStatus === "Initial" ? null : playerTurn}{" "}
+        {gameStatus === "Initial" ? null : gameStatus}
       </h2>
       <Board
         playerTurn={playerTurn}
@@ -48,11 +66,22 @@ export default function App() {
         gameStatus={gameStatus}
         gameMode={gameMode}
       />
-      {gameStatus === "Won" || gameStatus === "Draw" || gameStatus==="Initial" ? (
+      {gameStatus === "Won" || gameStatus === "Draw" || gameStatus === "Initial" ? (
         <div id="playAgain">
-          <h2>{gameStatus === "Won" || gameStatus==="Draw" ? "Play Again?" : "Choose game mode."}</h2>
-          <button onClick={oneClicked}>1-Player</button>
-          <button onClick={twoClicked}>2-Player</button>
+          <h2>
+            {gameStatus === "Won" || gameStatus === "Draw"
+              ? "Play Again?"
+              : "Choose game mode."}
+          </h2>
+          <button className={"button" + theme} onClick={oneClicked}>
+            1-Player
+          </button>
+          <button className={"button" + theme} onClick={twoClicked}>
+            2-Player
+          </button>
+          <button className={"button" + theme} onClick={zeroClicked}>
+            Auto
+          </button>
         </div>
       ) : null}
     </div>
