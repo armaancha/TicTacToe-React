@@ -15,30 +15,47 @@ export default function Board(props) {
   ]);
   const hasMounted = useRef(false);
   const hasMounted2 = useRef(false);
-
-  useEffect(() => {
-    if (hasMounted2.current === false) {
-      hasMounted2.current = true;
-      return;
-    }
-    if (props.gameStatus === "Turn") {
-      setCells(["-", "-", "-", "-", "-", "-", "-", "-", "-"]);
-      hasMounted.current = false;
-      hasMounted2.current = false;
-    }
-  }, [props.gameStatus]);
+  const hasMounted3 = useRef(false);
 
   useEffect(() => {
     if (hasMounted.current === false) {
       hasMounted.current = true;
       return;
     }
+    if (props.gameStatus === "Reset") {
+      setCells(["-", "-", "-", "-", "-", "-", "-", "-", "-"]);
+    }
+  }, [props.gameStatus]);
+
+  useEffect(() => {
+    if (hasMounted2.current === false) {
+      hasMounted2.current = true;
+      return;
+    }
+    if (props.gameStatus === "Reset") {
+      props.gameResult("Turn");
+      return;
+    }
     if (!checkWin(cells) && !checkFull()) {
-      if(props.nextPlayer()) {
-        setTimeout(() => {autoPlay()}, 1000);
-      }
+      props.nextPlayer();
     }
   }, [cells]);
+
+  useEffect(() => {
+    if (hasMounted3.current === false) {
+      hasMounted3.current = true;
+      return;
+    }
+    if (
+      (props.gameMode === 0 ||
+        (props.gameMode == 1 && props.playerTurn == "O")) &&
+      props.gameStatus === "Turn"
+    ) {
+      setTimeout(() => {
+        autoPlay();
+      }, 1000);
+    }
+  }, [props.playerTurn, props.gameMode, props.gameStatus]);
 
   function getRandomInt(max) {
     return Math.floor(Math.random() * max);
@@ -46,19 +63,17 @@ export default function Board(props) {
 
   function autoPlay() {
     let x = getRandomInt(9);
-    while(cells[x]!="-") {
+    while (cells[x] != "-") {
       x = getRandomInt(9);
     }
     let y = cells.map((item, index) => {
-      if(index===x) {
-        return "O";
+      if (index === x) {
+        return props.playerTurn;
       }
       return item;
-    })
+    });
     setCells(y);
-
   }
-  
 
   function checkWin(x) {
     if (
@@ -102,13 +117,20 @@ export default function Board(props) {
   }
 
   function cellClicked(e) {
-    if (props.gameStatus === "Won" || props.gameStatus === "Draw") {
+    if (
+      props.gameStatus === "Won" ||
+      props.gameStatus === "Draw" ||
+      props.gameStatus === "Initial"
+    ) {
       return;
     }
     if (cells[parseInt(e.target.id)] != "-") {
       return;
     }
-    if (props.gameMode===1 && props.playerTurn==="O") {
+    if (
+      props.gameMode <= 0 ||
+      (props.gameMode === 1 && props.playerTurn === "O")
+    ) {
       return;
     }
     let x = cells.map((item, index) => {
